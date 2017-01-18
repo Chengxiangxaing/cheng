@@ -1,0 +1,161 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>art-template基本语法</title>
+    <script src="js/jquery.js"></script>
+    <script src="js/template.js"></script>
+    <!--  art-template---HTML模板引擎， 表达式: {{content变量}} -->
+</head>
+<body>
+<!-- 模板 ：script, style标签浏览器可识别内容，但是不会渲染在页面上
+    其他的标签，浏览器可渲染在页面上
+    模板内部不能写注释-->
+<!-- id：当前模板的标识符(唯一)， type:文档类型-text/html -->
+<!--
+        数组遍历的模板
+        {{each 数组名称 as 数组元素  索引值 }}
+            要显示的模板标签及数据
+        {{/each}}
+
+        条件判断
+        {{if 条件 }}
+            要显示的模板标签及数据
+        {{/if}}
+
+        {{if 条件 }} 模板 {{else}} 模板 {{/if}}
+        
+        {{if 条件 }} 模板 {{else if 条件}} 模板 {{else}} 模板 {{/if}}
+
+        -->
+
+<!-- results:要遍历的数组，
+ abc：单个的数组元素, index:索引值
+ -->
+<script id="mytem" type="text/html">
+    <h1> {{title}} </h1>
+    <h4> {{petname}} </h4>
+    {{if results.length == 2 }}
+        <div>
+        {{each results as abc index }}
+            <p> {{abc.content}} {{index}} </p>
+            <p> {{abc.refBook}}   </p>
+            <p> <strong>{{abc.bookPrice | price}}</strong> </p>
+        {{/each}}
+        </div>
+    {{else if results.length == 0}}
+        <h3> 当前没有问答内容 </h3>
+    {{else}}
+        <h3> 当前有一个或者多个问答内容，但是不显示 </h3>
+    {{/if}}
+</script>
+<article>
+
+</article>
+</body>
+<script>
+    // 辅助函数
+    // template.helper(funcName, callback)
+    // para1:辅助函数名称
+    // para2:回调函数：处理当前数据的显示格式
+        // 函数返回值是最终的显示方式
+    template.helper('price', function(data){
+        // data:当前的数据
+//        console.log(data)
+        if( data == 0 ){
+            return '免费的书籍阅读'
+        }
+        return '$' + data.toFixed(2) + '美元'
+    })
+    // 时间显示的辅助方法:
+    template.helper('date', function(data){
+        console.log(data)  // 字符串
+//        console.log( new Date() )
+        data = new Date(data)  // 转换成日期对象
+//        console.log(data)
+        var y = data.getFullYear()
+        var m = data.getMonth() + 1
+        var d = data.getDate()
+        var h = data.getHours()
+        var mi = data.getMinutes()
+        var s = data.getSeconds()
+        function formdate(num){
+            var mm =  num < 10 ? '0' + num : num
+            return mm
+        }
+        m = formdate(m)
+        d = formdate(d)
+        h = formdate(h)
+        mi = formdate(mi)
+        s = formdate(s)
+        return y + '-' + m + '-' + d + ' '
+                + h + ':' + mi + ':' + s
+    })
+
+</script>
+<script>
+    // 假设服务器返回了这样一组数据，需要将数据显示在页面上
+    var datas = {
+        title:'问答系统',
+        petname:'王五',
+        results:[
+              {
+                  content:'第一个问题',
+                  time:2015-9-18,
+                  name:'张思',
+                  refBook:'HTML标准文档',
+                  bookPrice:99
+              },
+            {
+                content:'第二个问题',
+                time:2015-9-18,
+                name:'张三',
+                refBook:'CSS标准文档',
+                bookPrice:69
+            }
+        ]
+    }
+    // template(id, data)
+    // para1:模板的id名(标识符)
+    // para2: data===要渲染(显示)的数据
+    // 使用template()结合模板和数据，生成HTML内容(字符串)
+    // template会自动根据id名获取到某个模板
+    var html =  template('mytem', datas)
+//  console.log(html)
+    $('article').html(html)
+</script>
+<script type="text/javascript">
+///辅助函数 template.helper(funcName,callback)
+//para1辅助函数名称
+//para2回调函数：处理当前数据的显示格式
+//函数的返回值是最终的显示方式
+	 template.helper('price',function(data){
+	 	//data:当前的数据
+    	console.log(data)
+    	return '$'+data.toFixed(2)+'美元'
+    	
+    })
+	 template.helper('data',function(){
+	 	data=new Date(data)      //转换成日期对象
+	 	console.log(data)
+	 	var y=data.getFullYear()
+	 	var m=data.getMonth()+1
+	 	var d=data.getDate()
+	 	var h=data.getHours()
+	 	var mi=data.getMinutes()
+	 	var s=data.getSeconds()
+	 	function formdate(num){
+	 		mm=num<10?'0'+num:num
+	 		return mm
+	 	}
+	 	m=formdate(m)
+	 	d=formdate(d)
+	 	h=formdate(h)
+	 	mi=formdate(mi)
+	 	s=formdate(s)
+	 	
+	 	return y+'-'+m+'-'+d+'-'+h+'-'+mi+'-'+s
+	 })
+</script>
+</html>
